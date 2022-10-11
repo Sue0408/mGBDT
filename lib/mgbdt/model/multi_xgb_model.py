@@ -24,7 +24,7 @@ class MultiXGBModel:
         return "MultiXGBModel(input_size={}, output_size={}, learning_rate={:.3f}, max_depth={}, num_boost_round={})".format(
                 self.input_size, self.output_size, self.learning_rate, self.max_depth, self.num_boost_round)     #{:.3f}保留3位小数
 
-    def __call__(self, *args, **kwargs):  #定义预测函数
+    def __call__(self, *args, **kwargs):  #__call__使MultiXGBModel类的实例像函数一样可以被调用
         return self.predict(*args, **kwargs)
 
     def fit(self, X, y, num_boost_round=None, params=None):  #定义训练函数
@@ -34,8 +34,8 @@ class MultiXGBModel:
         else:
             self._fit_parallel(X, y, num_boost_round, params)
 
-    def predict(self, X):
-        assert X.shape[1] == self.input_size
+    def predict(self, X):  #定义预测函数
+        assert X.shape[1] == self.input_size  #assert断言 如果后面表达式为False会报错
         out = self._predict_serial(X)
         if not self.force_no_parallel and (X.shape[0] <= 10000 or X.shape[1] <= 10):
             out = self._predict_parallel(X)
