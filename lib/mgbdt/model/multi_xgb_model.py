@@ -3,7 +3,7 @@ from joblib import Parallel, delayed
 
 from .online_xgb import OnlineXGB
 
-#mXDB算法 多层XGB
+#MultiXGB算法 多输出XGB 输出的结果可以是多维 
 class MultiXGBModel:
     def __init__(self, input_size, output_size, learning_rate, max_depth=5, num_boost_round=1, force_no_parallel=False, **kwargs):
         """
