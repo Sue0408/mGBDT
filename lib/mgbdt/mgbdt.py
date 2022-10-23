@@ -24,7 +24,7 @@ class MGBDT:
             self.loss = loss
         self.target_lr = target_lr
         self.epsilon = epsilon
-        self.verbose = verbose
+        self.verbose = verbose  #verbose是日志显示，有三个参数可选择，分别为0不输出、1输出带进度条的日志信息、2输出不带进度条的
         self.layers = [None]
 
     @property
