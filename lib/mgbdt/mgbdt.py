@@ -170,7 +170,11 @@ class MGBDT:
         loss = self.calc_loss(pred, y)
         if eval_metric == "accuracy":
             from sklearn.metrics import accuracy_score
-            score = accuracy_score(y, pred.argmax(axis=1))
+            score = accuracy_score(y, pred.argmax(axis=1)) 
+            //argmax(axis=1)返回每一行最大值的索引，每行取值∈{0,1,...,N-1}
+            //对于N分类问题，y∈{0,1,...,N-1}
+            //设置输出结果为N维，即pred为N维，返回最大值索引，索引的取值就在{0,1,...,N-1}
+            //哪一个位置取值最大，就分入哪一类
         else:
             score = None
         if score is None:
