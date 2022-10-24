@@ -49,6 +49,10 @@ if __name__ == "__main__":
     save_path = osp.join(des_dir, "pred2.jpg")
     hiddens = net.get_hiddens(x_test)
     plot3d(hiddens[2], color=colors[y_test], save_path=save_path)
+    
+    # save the output
+    save_path = osp.join(des_dir, "pred3.jpg")
+    plot2d(hiddens[3], color=colors[y_test], save_path=save_path)
 
     import IPython
     IPython.embed()
