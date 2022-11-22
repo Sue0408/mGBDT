@@ -21,7 +21,7 @@ class TPLayer:
     def fit_forward_mapping(self, input, target):
         self.F.fit(input, target)
 
-    ## 训练后向映射G
+    ## 训练伪逆映射G
     def fit_inverse_mapping(self, input, epsilon):
         F, G = self.F, self.G
         fit_targets = input
