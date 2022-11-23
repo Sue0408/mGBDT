@@ -100,10 +100,14 @@ class MGBDT:
         H = self.get_hiddens(X)  ## 获取所有层的输出
         for i in range(2, M + 1):
             layer = self.layers[i]
-            if hasattr(layer, "fit_inverse_mapping"):
+            if hasattr(layer, "fit_inverse_mapping"):  ## hasattr(object, name)用于判断对象是否包含对应的属性
                 layer.fit_inverse_mapping(H[i - 1], epsilon=self.epsilon)
+                ## 调用layer类中的方法fit_inverse_mapping(H[i - 1], epsilon=self.epsilon)
+                ## 该方法中实际调用G.fit( F(H[i-1]+e), H[i-1]+e ) 即以该层的 输出值为自变量、输入值为因变量 进行拟合 
+                ## G是某个模型类的对象 mGBDT算法中G是GBDT
         self.log("[fit_inverse_mapping][end]")
 
+    ## 建立前向映射 即训练每一层的F
     def fit_forward_mapping(self, X, y):
         self.log("[fit_forward_mapping][start] X.shape={}, y.shape={}".format(X.shape, y.shape))
         layers = self.layers
