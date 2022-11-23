@@ -32,9 +32,11 @@ class MGBDT:
         return isinstance(self.layers[-1], BPLayer)
 
     @property
+    ## 返回层数(第一层是凑数的所以要-1)
     def n_layers(self):
         return len(self.layers) - 1
 
+    ## 建立新层
     def add_layer(self, layer_type, *args, **kwargs):
         if layer_type == "tp_layer":
             layer_class = TPLayer
@@ -45,6 +47,7 @@ class MGBDT:
         layer = layer_class(*args, **kwargs)
         self.layers.append(layer)
 
+    ## 返回某一层输出结果(默认返回最后一层输出)
     def forward(self, X, n_layers=None):
         M = self.n_layers if n_layers is None else n_layers
         layers = self.layers
@@ -53,6 +56,7 @@ class MGBDT:
             out = layers[i].forward(out)
         return out
 
+    ## 返回每一层输出结果
     def get_hiddens(self, X, n_layers=None):
         """
         Return
@@ -71,10 +75,11 @@ class MGBDT:
             H[i] = layers[i].forward(H[i - 1])
         return H
 
+    ## 初始化前向映射F1,F2,F3,...,Fn
     def init(self, X, n_rounds=1, learning_rate=None, max_depth=None, batch=0):
         self.log("[init][start]")
         layers = self.layers
-        M = self.n_layers
+        M = self.n_layers 
         params = {}
         if learning_rate is not None:
             params["learning_rate"] = learning_rate
@@ -88,10 +93,11 @@ class MGBDT:
             X = layers[i].forward(X)
         self.log("[init][end]")
 
+    ## 建立伪逆映射 即训练每一层的G
     def fit_inverse_mapping(self, X):
         self.log("[fit_inverse_mapping][start] X.shape={}".format(X.shape))
-        M = self.n_layers
-        H = self.get_hiddens(X)
+        M = self.n_layers   ## 获取层数-1
+        H = self.get_hiddens(X)  ## 获取所有层的输出
         for i in range(2, M + 1):
             layer = self.layers[i]
             if hasattr(layer, "fit_inverse_mapping"):
