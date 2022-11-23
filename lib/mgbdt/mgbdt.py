@@ -108,24 +108,27 @@ class MGBDT:
         self.log("[fit_forward_mapping][start] X.shape={}, y.shape={}".format(X.shape, y.shape))
         layers = self.layers
         M = self.n_layers
-        # 2.1 Compute hidden units in prediction
+        # 2.1 Compute hidden units in prediction 计算上一次迭代后隐藏层的输出结果
         self.log("2.1 Compute hidden units")
         H = self.get_hiddens(X)
-        # 2.2 Compute the targets
+        # 2.2 Compute the targets 计算上一次迭代后的伪标签 (backward是layer类的函数 tplayer类返回伪逆映射的输出值 bplayer类返回)
         self.log("2.2 Compute the targets")
         Ht = [None for _ in range(M + 1)]
-        if self.is_last_layer_bp:
-            Ht[M] = y
-        else:
-            gradient = self.loss.backward(H[M], y)
-            Ht[M] = H[M] - self.target_lr * gradient
+        if self.is_last_layer_bp:   ## 若最后一层是反向传播bp
+            Ht[M] = y  ## 则令最后一层伪标签=y
+        else:  ## 若最后一层是目标传播tp
+            gradient = self.loss.backward(H[M], y)  ## 则计算梯度gradient
+            Ht[M] = H[M] - self.target_lr * gradient  ## 最后一层伪标签=输出-lr*梯度
         for i in range(M, 1, -1):
+            ## 判断每层的传播方式 (只有最后一层可能是反向传播bp)
+            ## 若该层是bp 前一层伪标签 = 对前一层的输出值进行梯度下降
             if isinstance(layers[i], BPLayer):
                 assert i == M, "Only last layer can be BackPropogation Layer. i={}".format(i)
                 Ht[i - 1] = layers[i].backward(H[i - 1], Ht[i], self.target_lr)
+            ## 若该层是tp 前一层伪标签 = 后一层伪逆映射的输出值
             else:
                 Ht[i - 1] = layers[i].backward(H[i - 1], Ht[i])
-        # 2.3 Training feedward mapping
+        # 2.3 Training feedward mapping 训练本次迭代的新的前向映射
         self.log("2.3 Training feedward mapping")
         for i in range(1, M + 1):
             if i == 1:
